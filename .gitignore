@@ -3,5 +3,5 @@
 *.iml
 *.class
 .classpath
-build/*
-.gradle/*
+**/build/*
+**/.gradle/*
