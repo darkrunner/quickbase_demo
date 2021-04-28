@@ -21,8 +21,35 @@ the sql database should be used.
 
 ## Building and Running the code
 
-You may import and run the project within the IDE of your choice or run the following gradle command to generate and
-a jar to execute.
+You may import and run the project within the IDE of your choice or run the following gradle command to build and run the application.
 
-From the root dir execute `gradle jar` and then from within the build directory, `java -jar
-build/libs/dev-interview-materials.jar`.
+# Standalone H2
+
+From the root dir execute `./gradlew build bootRun` to build and run the application as standalone service with embedded H2 database.
+
+# Docker compose postgreSQL
+
+From the root dir execute `./gradlew build -Ppostgres docker` to build the application and create the necessary docker image.
+After that execute `docker-compose up -d --build` to bring up the necessary postgreSQL and application containers.
+To shut down the setup use `docker-compose down`.
+
+**Note!**
+Docker and Docker-compose are required for this operation!
+
+
+## Capabilities
+
+The application provides statistics information about the population of the available countries. Breakdown per state and city is also available.
+Corrections functionality is implemented as well in order to map the data provided by the Rest service to correspond to the one available in the database.
+
+**Visit:** 
+- `http://localhost:8080/v3/api-docs` to get the OpenAPI definition of the services.
+- `http://localhost:8080/swagger-ui.html` to use the SwaggerUI page for testing the functionality
+
+For commandline users to get the population data execute: `curl -X 'GET' 'http://localhost:8080/population'`
+
+## TODO
+
+Tests need to be implemented!
+
+

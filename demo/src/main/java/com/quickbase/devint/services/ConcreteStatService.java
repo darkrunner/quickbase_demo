@@ -49,7 +49,7 @@ public class ConcreteStatService implements StatService {
 		output.add(new ImmutablePair<>("Slovakia", 5424925));
 		output.add(new ImmutablePair<>("Kyrgyzstan", 5418300));
 		output.add(new ImmutablePair<>("Lithuania", 3329039));
-		output.add(new ImmutablePair<>("U.S.A.", 309349689));
+		output.add(new ImmutablePair<>("United States of America", 309349689));
 
 		return output;
 	}

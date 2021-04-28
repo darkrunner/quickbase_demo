@@ -22,10 +22,10 @@ public interface CountryRepository extends CrudRepository<Country, Integer> {
     @Query(value = "SELECT cntr.COUNTRY_NAME AS COUNTRY, sum(c.POPULATION) AS POPULATION FROM COUNTRY cntr \n" +
             "           INNER JOIN STATE s ON  s.COUNTRY_ID = cntr.COUNTRY_ID \n" +
             "            INNER JOIN CITY c ON c.STATE_ID = s.STATE_ID \n" +
-            "            WHERE cntr.COUNTRY_NAME = :countryName" +
+            "            WHERE cntr.COUNTRY_ID = :countryId" +
             "            AND c.POPULATION IS NOT NULL \n" +
             "            AND c.POPULATION > 0 \n" +
             "            GROUP BY cntr.COUNTRY_ID \n" +
             "            ORDER BY cntr.COUNTRY_NAME", nativeQuery = true)
-    List<CountryPopulation> getCountryPopulation(String countryName);
+    List<CountryPopulation> getCountryPopulation(Integer countryId);
 }

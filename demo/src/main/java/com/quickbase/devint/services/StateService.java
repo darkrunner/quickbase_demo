@@ -1,5 +1,6 @@
 package com.quickbase.devint.services;
 
+import com.quickbase.devint.model.State;
 import com.quickbase.devint.repository.StateRepository;
 import com.quickbase.devint.utils.StatisticsHelper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -22,27 +23,32 @@ public class StateService {
     @Autowired
     private StateRepository stateRepository;
 
-    private List<Pair<String, Integer>> getStatePopulationData(String countryName) {
-        logger.debug("Retrieving state population data from database.");
-        return stateRepository.getCountryStatesPopulation(countryName)
-                .stream().map( record ->
-                        new ImmutablePair<>(record.getState(), record.getPopulation())).collect(Collectors.toList());
+    @Autowired
+    private StatisticsHelper statisticsHelper;
+
+    public List<State> getAllCountryStates(Integer countryId) {
+        return stateRepository.findAllByCountry_CountryId(countryId);
     }
 
-    private List<Pair<String, Integer>> getCountryStatePopulationData(String countryName, String stateName) {
-        logger.debug("Retrieving state population data from database.");
-        return stateRepository.getCountryStatePopulation(countryName, stateName)
-                .stream().map( record ->
-                        new ImmutablePair<>(record.getState(), record.getPopulation())).collect(Collectors.toList());
-    }
+    public  Map<String, Integer> getCountryStatesPopulation(Integer countryId) {
+        logger.debug("Retrieving country {} state population data from database.", countryId);
 
-    public  Map<String, Integer> getCountryStatesPopulation(String countryName) {
-        return StatisticsHelper.computeStatistics(getStatePopulationData(countryName).stream(),
+        List<Pair<String, Integer>> records = stateRepository.getCountryStatesPopulation(countryId).stream()
+                .map( record -> new ImmutablePair<>(record.getState(), record.getPopulation()))
+                .collect(Collectors.toList());
+
+        return statisticsHelper.computeStatistics(records.stream(),
                 Stream.empty());
     }
 
-    public  Map<String, Integer> getCountryStatePopulation(String countryName, String stateName) {
-        return StatisticsHelper.computeStatistics(getCountryStatePopulationData(countryName, stateName).stream(),
+    public  Map<String, Integer> getCountryStatePopulation(Integer countryId, Integer stateId) {
+        logger.debug("Retrieving country {} state {} population data from database.", countryId, stateId);
+
+        List<Pair<String, Integer>> records = stateRepository.getCountryStatePopulation(countryId, stateId).stream()
+                .map( record -> new ImmutablePair<>(record.getState(), record.getPopulation()))
+                .collect(Collectors.toList());
+
+        return statisticsHelper.computeStatistics(records.stream(),
                 Stream.empty());
     }
 }

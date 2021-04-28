@@ -1,3 +1,4 @@
 rootProject.name = 'dev-interview-materials'
 include 'demo'
+include 'postgres'
 

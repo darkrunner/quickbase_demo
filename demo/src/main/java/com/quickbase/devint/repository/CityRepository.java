@@ -11,23 +11,16 @@ import java.util.List;
 @Repository
 public interface CityRepository extends CrudRepository<City, Integer> {
 
-    @Query(value = "SELECT c.CITY_NAME AS CITY, sum(c.POPULATION) AS POPULATION FROM CITY s \n" +
+    @Query(value = "SELECT c.CITY_NAME AS CITY, sum(c.POPULATION) AS POPULATION FROM CITY c \n" +
             "            INNER JOIN STATE s ON s.STATE_ID = c.STATE_ID \n" +
-            "            WHERE s.STATE_NAME = :stateName" +
+            "            WHERE s.STATE_ID = :stateId" +
+            "            AND c.CITY_ID = :cityId" +
             "            AND c.POPULATION IS NOT NULL \n" +
             "            AND c.POPULATION > 0 \n" +
-            "            GROUP BY s.STATE_ID \n" +
-            "            ORDER BY s.STATE_NAME", nativeQuery = true)
-    List<CityPopulation> getStateCitiesPopulation(String stateName);
+            "            GROUP BY c.CITY_ID \n" +
+            "            ORDER BY c.CITY_NAME", nativeQuery = true)
+    List<CityPopulation> getStateCityPopulation(Integer stateId, Integer cityId);
 
-    @Query(value = "SELECT c.CITY_NAME AS CITY, sum(c.POPULATION) AS POPULATION FROM CITY s \n" +
-            "            INNER JOIN STATE s ON s.STATE_ID = c.STATE_ID \n" +
-            "            WHERE s.STATE_NAME = :stateName" +
-            "            AND c.CITY_NAME = :cityName" +
-            "            AND c.POPULATION IS NOT NULL \n" +
-            "            AND c.POPULATION > 0 \n" +
-            "            GROUP BY s.STATE_ID \n" +
-            "            ORDER BY s.STATE_NAME", nativeQuery = true)
-    List<CityPopulation> getStateCityPopulation(String stateName, String cityName);
+    List<City> findAllByState_StateId(Integer stateId);
 
 }

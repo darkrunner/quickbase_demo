@@ -1,5 +1,6 @@
 package com.quickbase.devint.services;
 
+import com.quickbase.devint.model.City;
 import com.quickbase.devint.repository.CityRepository;
 import com.quickbase.devint.utils.StatisticsHelper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,27 +24,25 @@ public class CityService {
     @Autowired
     private CityRepository cityRepository;
 
-    private List<Pair<String, Integer>> getCitiesPopulationData(String stateName) {
-        logger.debug("Retrieving cities population data for state {} from database.", stateName);
-        return cityRepository.getStateCitiesPopulation(stateName)
-                .stream().map( record ->
-                        new ImmutablePair<>(record.getCity(), record.getPopulation())).collect(Collectors.toList());
-    }
+    @Autowired
+    private StatisticsHelper statisticsHelper;
 
-    private List<Pair<String, Integer>> getStateCityPopulationData(String stateName, String cityName) {
-        logger.debug("Retrieving state {} city {} population data from database.", stateName, cityName);
-        return cityRepository.getStateCityPopulation(stateName, cityName)
-                .stream().map( record ->
-                        new ImmutablePair<>(record.getCity(), record.getPopulation())).collect(Collectors.toList());
-    }
+    public  Map<String, Integer> getStateCityPopulation(Integer stateId, Integer cityId) {
+        logger.debug("Retrieving state {} city {} population data from database.", stateId, cityId);
 
-    public  Map<String, Integer> getCountryStatesPopulation(String stateName) {
-        return StatisticsHelper.computeStatistics(getCitiesPopulationData(stateName).stream(),
+        List<Pair<String, Integer>> records = cityRepository.getStateCityPopulation(stateId, cityId).stream()
+                .map( record -> new ImmutablePair<>(record.getCity(), record.getPopulation()))
+                .collect(Collectors.toList());
+
+        return statisticsHelper.computeStatistics(records.stream(),
                 Stream.empty());
     }
 
-    public  Map<String, Integer> getCountryStatePopulation(String stateName, String cityName) {
-        return StatisticsHelper.computeStatistics(getStateCityPopulationData(stateName, cityName).stream(),
-                Stream.empty());
+    public List<City> getAllStateCities(Integer stateId) {
+        return cityRepository.findAllByState_StateId(stateId);
+    }
+
+    public Optional<City> getCity(Integer cityId) {
+        return cityRepository.findById(cityId);
     }
 }

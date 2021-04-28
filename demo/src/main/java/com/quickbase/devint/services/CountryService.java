@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,31 +27,34 @@ public class CountryService {
     @Autowired
     private StatService restService;
 
-
-    private List<Pair<String, Integer>> getCountriesPopulationData() {
-        logger.debug("Retrieving all country population data from database.");
-        return countryRepository.getAllCountriesPopulation()
-                .stream().map( record -> new ImmutablePair<>(record.getCountry(), record.getPopulation())).collect(Collectors.toList());
-    }
-
-    private List<Pair<String, Integer>> getCountryPopulationData(String countryName) {
-        logger.debug("Retrieving country {} population data from database.", countryName);
-        return countryRepository.getCountryPopulation(countryName)
-                .stream().map( record -> new ImmutablePair<>(record.getCountry(), record.getPopulation())).collect(Collectors.toList());
-    }
+    @Autowired
+    private StatisticsHelper statisticsHelper;
 
     public Map<String, Integer> getCountriesPopulationStatistics() {
-        return StatisticsHelper.computeStatistics(getCountriesPopulationData().stream(),
+        logger.debug("Retrieving all country population data from database.");
+
+        List<Pair<String, Integer>> records = countryRepository.getAllCountriesPopulation().stream()
+                .map( record -> new ImmutablePair<>(record.getCountry(), record.getPopulation()))
+                .collect(Collectors.toList());
+
+        return statisticsHelper.computeStatistics(records.stream(),
                 restService.getCountryPopulationData().stream());
     }
 
-    public Map<String, Integer> getCountryPopulationStatistics(String countryName) {
-        return StatisticsHelper.computeStatistics(getCountryPopulationData(countryName).stream(),
+    public Map<String, Integer> getCountryPopulationStatistics(Integer countryId) {
+        logger.debug("Retrieving country {} population data from database.", countryId);
+
+        List<Pair<String, Integer>> records = countryRepository.getCountryPopulation(countryId).stream()
+                .map( record -> new ImmutablePair<>(record.getCountry(), record.getPopulation())).
+                        collect(Collectors.toList());
+
+        return statisticsHelper.computeStatistics(records.stream(),
                 restService.getCountryPopulationData().stream());
     }
 
     public List<Country> getAllCountries() {
-        return StreamSupport.stream(countryRepository.findAll().spliterator(), false).collect(Collectors.toList());
+        return StreamSupport.stream(countryRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
 }

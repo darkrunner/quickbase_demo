@@ -1,20 +1,9 @@
 package com.quickbase.devint.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Set;
 
-@Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 public class Country {
     @Id
     private Integer countryId;
@@ -22,7 +11,40 @@ public class Country {
     @Column
     private String countryName;
 
-    @JsonIgnore
-    @OneToMany(mappedBy="country")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "country")
     private Set<State> states;
+
+    public Country() {
+        //NO-Ops
+    }
+
+    public Country(Integer countryId, String countryName, Set<State> states) {
+        this.countryId = countryId;
+        this.countryName = countryName;
+        this.states = states;
+    }
+
+    public Integer getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(Integer countryId) {
+        this.countryId = countryId;
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    public Set<State> getStates() {
+        return states;
+    }
+
+    public void setStates(Set<State> states) {
+        this.states = states;
+    }
 }
