@@ -14,6 +14,8 @@ services:
     image: demo:0.0.1-SNAPSHOT
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/demodb
     depends_on:
       postgres:
         condition: service_healthy
